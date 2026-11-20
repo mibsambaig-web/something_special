@@ -1,12 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import './App.css';
 
-const BIRTHDAY = new Date('2026-11-20T00:00:00');
+// Change this to a future date/time if you want to see the countdown screen:
+// e.g. new Date('2026-11-22T00:00:00+05:00') for midnight PKT
+const BIRTHDAY = new Date('2026-11-22T00:00:00');
 const NAME = 'Mina';
 
 function getTimeLeft() {
-  const diff = BIRTHDAY - new Date();
+  const diff = BIRTHDAY.getTime() - Date.now();
   if (diff <= 0) return null;
+
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
     hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
@@ -18,10 +21,14 @@ function getTimeLeft() {
 const pad = (n) => String(n).padStart(2, '0');
 
 export default function App() {
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
+  const [timeLeft, setTimeLeft] = useState(() => getTimeLeft());
 
   useEffect(() => {
-    const timer = setInterval(() => setTimeLeft(getTimeLeft()), 1000);
+    setTimeLeft(getTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(getTimeLeft());
+    }, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
@@ -51,7 +58,19 @@ function Birthday() {
   const [showSecret, setShowSecret] = useState(false);
   const audioRef = useRef(null);
 
-  // Try to autoplay the song when the page loads
+  const hearts = useMemo(
+    () =>
+      Array.from({ length: 22 }, (_, i) => ({
+        i,
+        left: `${Math.random() * 100}%`,
+        animationDuration: `${10 + Math.random() * 12}s`,
+        animationDelay: `${Math.random() * -20}s`,
+        transform: `scale(${0.5 + Math.random() * 0.9})`,
+        opacity: 0.15 + Math.random() * 0.25,
+      })),
+    []
+  );
+
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
@@ -59,7 +78,6 @@ function Birthday() {
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Browser blocked autoplay – this is normal on many phones
           console.log('Autoplay blocked. User needs to tap once.');
         });
       }
@@ -68,21 +86,20 @@ function Birthday() {
 
   return (
     <main className="screen birthday">
-      {/* Floating hearts background */}
       <div className="hearts">
-        {[...Array(22)].map((_, i) => (
+        {hearts.map((h) => (
           <span
-            key={i}
+            key={h.i}
             className="heart"
             style={{
-              '--i': i,
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${10 + Math.random() * 12}s`,
-              animationDelay: `${Math.random() * -20}s`,
-              transform: `scale(${0.5 + Math.random() * 0.9})`,
-              opacity: 0.15 + Math.random() * 0.25,
+              '--i': h.i,
+              left: h.left,
+              animationDuration: h.animationDuration,
+              animationDelay: h.animationDelay,
+              transform: h.transform,
+              opacity: h.opacity,
             }}
-          ></span>
+          />
         ))}
       </div>
 
@@ -98,22 +115,18 @@ function Birthday() {
           I love you. ❤️
         </p>
 
-        {/* Secret message button */}
         <button className="secret-btn" onClick={() => setShowSecret(!showSecret)}>
           {showSecret ? 'Hide message' : 'Tap the heart ❤️'}
         </button>
 
         {showSecret && (
           <div className="secret-message">
-            Message Censored for now hehe  
-           
+            Message Censored for now hehe
           </div>
         )}
 
-        {/* Hidden audio – auto plays */}
         <audio ref={audioRef} src="/alfaaz.mp3" loop autoPlay />
 
-        {/* Media Card */}
         <div className="media-card">
           <h2 className="media-title">Our Moments</h2>
 
