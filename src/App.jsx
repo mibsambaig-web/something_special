@@ -56,6 +56,7 @@ const videos = ['clip1.mp4', 'clip2.mp4', 'clip3.mp4'];
 
 function Birthday() {
   const [showSecret, setShowSecret] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
   const hearts = useMemo(
@@ -73,19 +74,56 @@ function Birthday() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
-      audio.volume = 0.7;
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          console.log('Autoplay blocked. User needs to tap once.');
-        });
+    if (!audio) return;
+
+    audio.volume = 0.7;
+
+    const tryPlay = () => {
+      audio
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    };
+
+    tryPlay();
+
+    // If browser blocked autoplay, start music on first tap anywhere
+    const unlockAudio = () => {
+      if (audio.paused) {
+        tryPlay();
       }
-    }
+    };
+
+    window.addEventListener('pointerdown', unlockAudio, { once: true });
+    return () => window.removeEventListener('pointerdown', unlockAudio);
   }, []);
+
+  const toggleMusic = (e) => {
+    e.stopPropagation(); // prevents double-triggering unlockAudio
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
 
   return (
     <main className="screen birthday">
+      {/* Top-right floating music button */}
+      <button
+        type="button"
+        className={`music-toggle ${isPlaying ? 'playing' : ''}`}
+        onClick={toggleMusic}
+        aria-label={isPlaying ? 'Pause music' : 'Play music'}
+      >
+        {isPlaying ? '⏸ Pause' : '▶ Play'}
+      </button>
+
+      {/* Floating hearts background */}
       <div className="hearts">
         {hearts.map((h) => (
           <span
@@ -115,18 +153,28 @@ function Birthday() {
           I love you. ❤️
         </p>
 
+        {/* Secret message button */}
         <button className="secret-btn" onClick={() => setShowSecret(!showSecret)}>
           {showSecret ? 'Hide message' : 'Tap the heart ❤️'}
         </button>
 
         {showSecret && (
           <div className="secret-message">
-            Message Censored for now hehe
+            Who is your daddy😔👉🏻👈🏻
           </div>
         )}
 
-        <audio ref={audioRef} src="/alfaaz.mp3" loop autoPlay />
+        {/* Audio element */}
+        <audio
+          ref={audioRef}
+          src="/alfaaz.mp3"
+          loop
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
 
+        {/* Media Card */}
         <div className="media-card">
           <h2 className="media-title">Our Moments</h2>
 
