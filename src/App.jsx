@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import './App.css';
 
-// Change this to a future date/time if you want to see the countdown screen:
-// e.g. new Date('2026-11-22T00:00:00+05:00') for midnight PKT
 const BIRTHDAY = new Date('2026-11-22T00:00:00');
 const NAME = 'Mina';
 
@@ -36,8 +34,9 @@ export default function App() {
 
   return (
     <main className="screen">
-      <p className="eyebrow">Counting down to</p>
+      <p className="eyebrow">Count down to</p>
       <h1 className="title">{NAME}'s Birthday</h1>
+      <p className="eyebrow">Unlocks in:</p>
       <div className="timer">
         {Object.entries(timeLeft).map(([label, value]) => (
           <div className="box" key={label}>
@@ -50,9 +49,8 @@ export default function App() {
   );
 }
 
-// ——— Your media ———
-const photos = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg', 'photo5.jpg'];
-const videos = ['clip1.mp4', 'clip2.mp4', 'clip3.mp4', 'clip4.mp4', 'clip5.mp4'];
+const photos = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg', 'photo5.jpg', 'photo6.jpg', 'photo7.jpg', 'photo8.jpg'];
+const videos = ['clip1.mp4', 'clip2.mp4', 'clip3.mp4', 'clip4.mp4', 'clip5.mp4', 'clip6.mp4'];
 
 function Birthday() {
   const [showSecret, setShowSecret] = useState(false);
