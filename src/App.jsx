@@ -51,8 +51,8 @@ export default function App() {
 }
 
 // ——— Your media ———
-const photos = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg'];
-const videos = ['clip1.mp4', 'clip2.mp4', 'clip3.mp4'];
+const photos = ['photo1.jpg', 'photo2.jpg', 'photo3.jpg', 'photo4.jpg', 'photo5.jpg'];
+const videos = ['clip1.mp4', 'clip2.mp4', 'clip3.mp4', 'clip4.mp4', 'clip5.mp4'];
 
 function Birthday() {
   const [showSecret, setShowSecret] = useState(false);
@@ -155,7 +155,7 @@ function Birthday() {
 
         {/* Secret message button */}
         <button className="secret-btn" onClick={() => setShowSecret(!showSecret)}>
-          {showSecret ? 'Hide message' : 'Tap the heart ❤️'}
+          {showSecret ? 'Hide message' : 'Secret quesion 😛'}
         </button>
 
         {showSecret && (
