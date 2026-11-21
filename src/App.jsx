@@ -3,7 +3,7 @@ import './App.css';
 
 // Change this to a future date/time if you want to see the countdown screen:
 // e.g. new Date('2026-11-22T00:00:00+05:00') for midnight PKT
-const BIRTHDAY = new Date('2026-11-20T00:00:00');
+const BIRTHDAY = new Date('2026-11-22T00:00:00');
 const NAME = 'Mina';
 
 function getTimeLeft() {
